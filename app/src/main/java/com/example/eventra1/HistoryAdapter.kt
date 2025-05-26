@@ -69,14 +69,14 @@ class HistoryAdapter(
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var tvStatusAbsen: TextView = itemView.tvStatusAbsen
-        var tvNomor: TextView = itemView.tvNomor
-        var tvNama: TextView = itemView.tvNama
-        var tvLokasi: TextView = itemView.tvLokasi
-        var tvAbsenTime: TextView = itemView.tvAbsenTime
-        var cvHistory: CardView = itemView.cvHistory
-        var imageProfile: ShapeableImageView = itemView.imageProfile
-        var colorStatus: View = itemView.colorStatus
+        val tvStatusAbsen: TextView = itemView.findViewById(R.id.tvStatusAbsen)
+        val tvNomor: TextView = itemView.findViewById(R.id.tvNomor)
+        val tvNama: TextView = itemView.findViewById(R.id.tvNama)
+        val tvLokasi: TextView = itemView.findViewById(R.id.tvLokasi)
+        val tvAbsenTime: TextView = itemView.findViewById(R.id.tvAbsenTime)
+        val cvHistory: CardView = itemView.findViewById(R.id.cvHistory)
+        val imageProfile: ShapeableImageView = itemView.findViewById(R.id.imageProfile)
+        val colorStatus: View = itemView.findViewById(R.id.colorStatus)
 
         init {
             cvHistory.setOnClickListener {

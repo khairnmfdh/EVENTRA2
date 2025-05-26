@@ -2,23 +2,26 @@ package com.example.eventra1.view.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.azhar.absensi.R
-import com.azhar.absensi.utils.SessionLogin
-import com.azhar.absensi.view.absen.AbsenActivity
-import com.azhar.absensi.view.history.HistoryActivity
-import com.example.eventra1.AbsenActivity
-import com.example.eventra1.HistoryActivity
+import androidx.cardview.widget.CardView
 import com.example.eventra1.R
 import com.example.eventra1.utils.SessionLogin
 import com.example.eventra1.view.absen.AbsenActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import com.example.eventra1.view.history.HistoryActivity
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var strTitle: String
     lateinit var session: SessionLogin
+    val cvAbsenMasuk = findViewById<CardView>(R.id.cvAbsenMasuk)
+    val cvAbsenKeluar = findViewById<CardView>(R.id.cvAbsenKeluar)
+    val cvPerizinan = findViewById<CardView>(R.id.cvPerizinan)
+    val cvHistory = findViewById<CardView>(R.id.cvHistory)
+    val imageLogout = findViewById<ImageView>(R.id.imageLogout)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

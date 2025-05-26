@@ -1,7 +1,9 @@
 package com.example.eventra1.viewmodel
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
+import com.example.eventra1.database.DatabaseClient
 import com.example.eventra1.database.DatabaseClient.Companion.getInstance
 import com.example.eventra1.database.dao.DatabaseDao
 import com.example.eventra1.database.DatabaseClient.Companion.getInstance
@@ -11,7 +13,7 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class AbsenViewModel(application: Application) : AndroidViewModel(application) {
-    var databaseDao: DatabaseDao? = getInstance(application)?.appDatabase?.databaseDao()
+    var databaseDao: DatabaseDao? = DatabaseClient.getInstance(application)?.appDatabase?.databaseDao()
 
     fun addDataAbsen(
         foto: String, nama: String,

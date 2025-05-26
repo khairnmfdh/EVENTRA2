@@ -16,7 +16,12 @@ import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
 import android.widget.DatePicker
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
@@ -61,7 +66,10 @@ class AbsenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_absen)
 
-        setInitLayout()
+
+        setInitLayout(
+
+        )
         setCurrentLocation()
         setUploadData()
     }
@@ -87,6 +95,7 @@ class AbsenActivity : AppCompatActivity() {
                             geocoder.getFromLocation(strCurrentLatitude, strCurrentLongitude, 1)
                         if (addressList != null && addressList.size > 0) {
                             strCurrentLocation = addressList[0].getAddressLine(0)
+                            val inputLokasi = findViewById<EditText>(R.id.inputLokasi);
                             inputLokasi.setText(strCurrentLocation)
                         }
                     } catch (e: IOException) {
@@ -108,9 +117,12 @@ class AbsenActivity : AppCompatActivity() {
         strTitle = intent.extras?.getString(DATA_TITLE).toString()
 
         if (strTitle != null) {
-            tvTitle.text = strTitle
+            val tvTitle = findViewById<TextView>(R.id.tvTitle)
+            tvTitle.setText(strTitle)
         }
 
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         if (supportActionBar != null) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -120,6 +132,7 @@ class AbsenActivity : AppCompatActivity() {
         absenViewModel = ViewModelProvider(this, (ViewModelProvider.AndroidViewModelFactory
             .getInstance(this.application) as ViewModelProvider.Factory)).get(AbsenViewModel::class.java)
 
+        val inputTanggal = findViewById<EditText>(R.id.inputTanggal)
         inputTanggal.setOnClickListener {
             val tanggalAbsen = Calendar.getInstance()
             val date =
@@ -138,7 +151,7 @@ class AbsenActivity : AppCompatActivity() {
                 tanggalAbsen[Calendar.DAY_OF_MONTH]
             ).show()
         }
-
+        val layoutImage = findViewById<LinearLayout>(R.id.layoutImage)
         layoutImage.setOnClickListener {
             Dexter.withContext(this@AbsenActivity)
                 .withPermissions(
@@ -193,6 +206,14 @@ class AbsenActivity : AppCompatActivity() {
                 }).check()
         }
     }
+
+    private fun setSupportActionBar(toolbar: Toolbar) {
+
+    }
+    val btnAbsen = findViewById<com.google.android.material.button.MaterialButton>(R.id.btnAbsen)
+    val inputNama = findViewById<EditText>(R.id.inputNama)
+    val inputTanggal = findViewById<EditText>(R.id.inputTanggal)
+    val inputKeterangan = findViewById<EditText>(R.id.inputKeterangan)
 
     private fun setUploadData() {
         btnAbsen.setOnClickListener {
@@ -264,6 +285,7 @@ class AbsenActivity : AppCompatActivity() {
                 true
             )
 
+            val imageSelfie = findViewById<ImageView>(R.id.imageSelfie)
             if (bitmapImage == null) {
                 Toast.makeText(this@AbsenActivity,
                     "Ups, foto kamu belum ada!", Toast.LENGTH_LONG).show()

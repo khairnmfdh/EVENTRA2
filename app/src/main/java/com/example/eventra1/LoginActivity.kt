@@ -4,22 +4,22 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.azhar.absensi.R
-import com.azhar.absensi.utils.SessionLogin
-import com.azhar.absensi.view.main.MainActivity
-import com.example.eventra1.MainActivity
 import com.example.eventra1.R
 import com.example.eventra1.utils.SessionLogin
-import kotlinx.android.synthetic.main.activity_login.*
+import com.example.eventra1.view.main.MainActivity
 
 class LoginActivity : AppCompatActivity() {
     lateinit var session: SessionLogin
     lateinit var strNama: String
     lateinit var strPassword: String
     var REQ_PERMISSION = 101
+    val btnLogin = findViewById<com.google.android.material.button.MaterialButton>(R.id.btnLogin)
+    val inputNama = findViewById<EditText>(R.id.inputNama)
+    val inputPassword = findViewById<EditText>(R.id.inputPassword)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

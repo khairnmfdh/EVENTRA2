@@ -4,11 +4,15 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventra1.R
+import com.example.eventra1.databinding.ActivityHistoryBinding
 import com.example.eventra1.model.ModelDatabase
 import com.example.eventra1.view.history.HistoryAdapter.HistoryAdapterCallback
 import com.example.eventra1.viewmodel.HistoryViewModel
@@ -17,6 +21,9 @@ class HistoryActivity : AppCompatActivity(), HistoryAdapterCallback {
     var modelDatabaseList: MutableList<ModelDatabase> = ArrayList()
     lateinit var historyAdapter: HistoryAdapter
     lateinit var historyViewModel: HistoryViewModel
+    val tvNotFound = findViewById<TextView>(R.id.tvNotFound)
+    val rvHistory = binding.rvHistory
+
 
     private lateinit var binding: ActivityHistoryBinding
 
@@ -30,6 +37,8 @@ class HistoryActivity : AppCompatActivity(), HistoryAdapterCallback {
     }
 
     private fun setInitLayout() {
+
+
         setSupportActionBar(binding.toolbar)
         if (supportActionBar != null) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
