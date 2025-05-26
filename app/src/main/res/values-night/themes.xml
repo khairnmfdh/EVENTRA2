@@ -1,7 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.EVENTRA1" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Theme.Eventra1" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- atau Theme.Material3.DayNight -->
+        <!-- ... -->
     </style>
 </resources>

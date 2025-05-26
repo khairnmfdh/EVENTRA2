@@ -11,19 +11,28 @@ import androidx.core.app.ActivityCompat
 import com.example.eventra1.R
 import com.example.eventra1.utils.SessionLogin
 import com.example.eventra1.view.main.MainActivity
+import com.google.android.material.button.MaterialButton
 
 class LoginActivity : AppCompatActivity() {
+
     lateinit var session: SessionLogin
     lateinit var strNama: String
     lateinit var strPassword: String
     var REQ_PERMISSION = 101
-    val btnLogin = findViewById<com.google.android.material.button.MaterialButton>(R.id.btnLogin)
-    val inputNama = findViewById<EditText>(R.id.inputNama)
-    val inputPassword = findViewById<EditText>(R.id.inputPassword)
+
+    // Declare variables
+    lateinit var btnLogin: MaterialButton
+    lateinit var inputNama: EditText
+    lateinit var inputPassword: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        // Initialize views after setContentView
+        btnLogin = findViewById(R.id.btnLogin)
+        inputNama = findViewById(R.id.inputNama)
+        inputPassword = findViewById(R.id.inputPassword)
 
         setPermission()
         setInitLayout()
@@ -57,9 +66,9 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this@LoginActivity, "Form tidak boleh kosong!",
                     Toast.LENGTH_SHORT).show()
             } else {
-                val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                startActivity(intent)
                 session.createLoginSession(strNama)
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                finish()
             }
         }
     }
@@ -67,7 +76,8 @@ class LoginActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray) {
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         for (grantResult in grantResults) {
             if (grantResult == PackageManager.PERMISSION_GRANTED) {
@@ -81,5 +91,4 @@ class LoginActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
     }
-
 }

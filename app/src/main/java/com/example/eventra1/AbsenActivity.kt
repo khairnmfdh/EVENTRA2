@@ -39,6 +39,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -62,54 +63,78 @@ class AbsenActivity : AppCompatActivity() {
     lateinit var absenViewModel: AbsenViewModel
     lateinit var progressDialog: ProgressDialog
 
+    // Deklarasi view sebagai lateinit
+    private lateinit var btnAbsen: com.google.android.material.button.MaterialButton
+    private lateinit var inputNama: EditText
+    private lateinit var inputTanggal: EditText
+    private lateinit var inputKeterangan: EditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_absen)
 
-
-        setInitLayout(
-
-        )
+        setInitLayout()
         setCurrentLocation()
-        setUploadData()
+        // setUploadData() akan dipanggil di dalam setInitLayout() setelah view diinisialisasi
     }
 
     private fun setCurrentLocation() {
         progressDialog.show()
+
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        if (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            progressDialog.dismiss()
             return
         }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener(this) { location ->
-                progressDialog.dismiss()
-                if (location != null) {
-                    strCurrentLatitude = location.latitude
-                    strCurrentLongitude = location.longitude
-                    val geocoder = Geocoder(this@AbsenActivity, Locale.getDefault())
-                    try {
-                        val addressList =
-                            geocoder.getFromLocation(strCurrentLatitude, strCurrentLongitude, 1)
-                        if (addressList != null && addressList.size > 0) {
-                            strCurrentLocation = addressList[0].getAddressLine(0)
-                            val inputLokasi = findViewById<EditText>(R.id.inputLokasi);
-                            inputLokasi.setText(strCurrentLocation)
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                strCurrentLatitude = location.latitude
+                strCurrentLongitude = location.longitude
+
+                // Jalankan geocoding di coroutine dengan timeout
+                CoroutineScope(Dispatchers.Main).launch {
+                    val address = withContext(Dispatchers.IO) {
+                        try {
+                            withTimeout(3000L) {  // timeout 3 detik
+                                val geocoder = Geocoder(this@AbsenActivity, Locale.getDefault())
+                                val addressList = geocoder.getFromLocation(strCurrentLatitude, strCurrentLongitude, 1)
+                                if (addressList != null && addressList.isNotEmpty()) {
+                                    return@withTimeout addressList[0].getAddressLine(0)
+                                } else {
+                                    Toast.makeText(applicationContext, "Gagal mendapatkan Lokasi", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        } catch (e: TimeoutCancellationException) {
+                            // Timeout
+                            null
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                            null
                         }
-                    } catch (e: IOException) {
-                        e.printStackTrace()
                     }
-                } else {
                     progressDialog.dismiss()
-                    Toast.makeText(this@AbsenActivity,
-                        "Ups, gagal mendapatkan lokasi. Silahkan periksa GPS atau koneksi internet Anda!",
-                        Toast.LENGTH_SHORT).show()
-                    strLatitude = "0"
-                    strLongitude = "0"
+
+                    if (address != null) {
+                        strCurrentLocation = address.toString()
+                        findViewById<EditText>(R.id.inputLokasi).setText(strCurrentLocation)
+                    } else {
+                        Toast.makeText(this@AbsenActivity, "Gagal mendapatkan alamat (timeout).", Toast.LENGTH_SHORT).show()
+                    }
                 }
+            } else {
+                progressDialog.dismiss()
+                Toast.makeText(this@AbsenActivity,
+                    "Ups, gagal mendapatkan lokasi. Silahkan periksa GPS atau koneksi internet Anda!",
+                    Toast.LENGTH_SHORT).show()
+                strLatitude = "0"
+                strLongitude = "0"
             }
+        }
     }
 
     private fun setInitLayout() {
@@ -118,39 +143,44 @@ class AbsenActivity : AppCompatActivity() {
 
         if (strTitle != null) {
             val tvTitle = findViewById<TextView>(R.id.tvTitle)
-            tvTitle.setText(strTitle)
+            tvTitle.text = strTitle
         }
 
-
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         if (supportActionBar != null) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             supportActionBar?.setDisplayShowTitleEnabled(false)
         }
 
-        absenViewModel = ViewModelProvider(this, (ViewModelProvider.AndroidViewModelFactory
-            .getInstance(this.application) as ViewModelProvider.Factory)).get(AbsenViewModel::class.java)
+        // Inisialisasi View
+        btnAbsen = findViewById(R.id.btnAbsen)
+        inputNama = findViewById(R.id.inputNama)
+        inputTanggal = findViewById(R.id.inputTanggal)
+        inputKeterangan = findViewById(R.id.inputKeterangan)
+
+        // Panggil setUploadData setelah inisialisasi View
+        setUploadData()
 
         val inputTanggal = findViewById<EditText>(R.id.inputTanggal)
         inputTanggal.setOnClickListener {
             val tanggalAbsen = Calendar.getInstance()
-            val date =
-                OnDateSetListener { _: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
-                    tanggalAbsen[Calendar.YEAR] = year
-                    tanggalAbsen[Calendar.MONTH] = monthOfYear
-                    tanggalAbsen[Calendar.DAY_OF_MONTH] = dayOfMonth
-                    val strFormatDefault = "dd MMMM yyyy HH:mm"
-                    val simpleDateFormat = SimpleDateFormat(strFormatDefault, Locale.getDefault())
-                    inputTanggal.setText(simpleDateFormat.format(tanggalAbsen.time))
-                }
+            val date = OnDateSetListener { _: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
+                tanggalAbsen.set(Calendar.YEAR, year)
+                tanggalAbsen.set(Calendar.MONTH, monthOfYear)
+                tanggalAbsen.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                val strFormatDefault = "dd MMMM yyyy HH:mm"
+                val simpleDateFormat = SimpleDateFormat(strFormatDefault, Locale.getDefault())
+                inputTanggal.setText(simpleDateFormat.format(tanggalAbsen.time))
+            }
             DatePickerDialog(
                 this@AbsenActivity, date,
-                tanggalAbsen[Calendar.YEAR],
-                tanggalAbsen[Calendar.MONTH],
-                tanggalAbsen[Calendar.DAY_OF_MONTH]
+                tanggalAbsen.get(Calendar.YEAR),
+                tanggalAbsen.get(Calendar.MONTH),
+                tanggalAbsen.get(Calendar.DAY_OF_MONTH)
             ).show()
         }
+
         val layoutImage = findViewById<LinearLayout>(R.id.layoutImage)
         layoutImage.setOnClickListener {
             Dexter.withContext(this@AbsenActivity)
@@ -181,7 +211,9 @@ class AbsenActivity : AppCompatActivity() {
                                 cameraIntent.putExtra("default_camera", "1")
                                 cameraIntent.putExtra(
                                     "default_mode",
-                                    "com.huawei.camera2.mode.photo.PhotoMode")
+                                    "com.huawei.camera2.mode.photo.PhotoMode"
+                                )
+
                                 cameraIntent.putExtra(
                                     MediaStore.EXTRA_OUTPUT,
                                     FileProvider.getUriForFile(
@@ -200,28 +232,22 @@ class AbsenActivity : AppCompatActivity() {
 
                     override fun onPermissionRationaleShouldBeShown(
                         permissions: List<PermissionRequest>,
-                        token: PermissionToken) {
+                        token: PermissionToken
+                    ) {
                         token.continuePermissionRequest()
                     }
                 }).check()
         }
     }
-
-    private fun setSupportActionBar(toolbar: Toolbar) {
-
-    }
-    val btnAbsen = findViewById<com.google.android.material.button.MaterialButton>(R.id.btnAbsen)
-    val inputNama = findViewById<EditText>(R.id.inputNama)
-    val inputTanggal = findViewById<EditText>(R.id.inputTanggal)
-    val inputKeterangan = findViewById<EditText>(R.id.inputKeterangan)
-
     private fun setUploadData() {
         btnAbsen.setOnClickListener {
             val strNama = inputNama.text.toString()
             val strTanggal = inputTanggal.text.toString()
             val strKeterangan = inputKeterangan.text.toString()
-            if (strFilePath.equals(null) || strNama.isEmpty() || strCurrentLocation.isEmpty()
-                || strTanggal.isEmpty() || strKeterangan.isEmpty()) {
+
+            if (strFilePath.isEmpty() || strNama.isEmpty() || strCurrentLocation.isEmpty()
+                || strTanggal.isEmpty() || strKeterangan.isEmpty()
+            ) {
                 Toast.makeText(this@AbsenActivity,
                     "Data tidak boleh ada yang kosong!", Toast.LENGTH_SHORT).show()
             } else {
@@ -230,7 +256,8 @@ class AbsenActivity : AppCompatActivity() {
                     strNama,
                     strTanggal,
                     strCurrentLocation,
-                    strKeterangan)
+                    strKeterangan
+                )
                 Toast.makeText(this@AbsenActivity,
                     "Laporan Anda terkirim, tunggu info selanjutnya ya!", Toast.LENGTH_SHORT).show()
                 finish()
@@ -240,15 +267,15 @@ class AbsenActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     private fun createImageFile(): File {
-        strTimeStamp = SimpleDateFormat("dd MMMM yyyy HH:mm:ss").format(Date())
+        strTimeStamp = SimpleDateFormat("dd MMMM yyyy HH:mm:ss", Locale.getDefault()).format(Date())
         strImageName = "IMG_"
         fileDirectoty = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "")
         imageFilename = File.createTempFile(strImageName, ".jpg", fileDirectoty)
-        strFilePath = imageFilename.getAbsolutePath()
+        strFilePath = imageFilename.absolutePath
         return imageFilename
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         convertImage(strFilePath)
     }
@@ -257,7 +284,7 @@ class AbsenActivity : AppCompatActivity() {
         val imageFile = File(imageFilePath)
         if (imageFile.exists()) {
             val options = BitmapFactory.Options()
-            var bitmapImage = BitmapFactory.decodeFile(strFilePath, options)
+            var bitmapImage = BitmapFactory.decodeFile(imageFile.absolutePath, options)
 
             try {
                 exifInterface = ExifInterface(imageFile.absolutePath)
@@ -305,7 +332,8 @@ class AbsenActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray) {
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         for (grantResult in grantResults) {
             if (grantResult == PackageManager.PERMISSION_GRANTED) {

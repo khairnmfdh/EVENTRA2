@@ -2,7 +2,6 @@ package com.example.eventra1.view.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -16,21 +15,18 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var strTitle: String
     lateinit var session: SessionLogin
-    val cvAbsenMasuk = findViewById<CardView>(R.id.cvAbsenMasuk)
-    val cvAbsenKeluar = findViewById<CardView>(R.id.cvAbsenKeluar)
-    val cvPerizinan = findViewById<CardView>(R.id.cvPerizinan)
-    val cvHistory = findViewById<CardView>(R.id.cvHistory)
-    val imageLogout = findViewById<ImageView>(R.id.imageLogout)
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setInitLayout()
-    }
+        // Pindahkan semua findViewById ke sini setelah setContentView
+        val cvAbsenMasuk = findViewById<CardView>(R.id.cvAbsenMasuk)
+        val cvAbsenKeluar = findViewById<CardView>(R.id.cvAbsenKeluar)
+        val cvPerizinan = findViewById<CardView>(R.id.cvPerizinan)
+        val cvHistory = findViewById<CardView>(R.id.cvHistory)
+        val imageLogout = findViewById<ImageView>(R.id.imageLogout)
 
-    private fun setInitLayout() {
         session = SessionLogin(this)
         session.checkLogin()
 
@@ -64,8 +60,8 @@ class MainActivity : AppCompatActivity() {
             val builder = AlertDialog.Builder(this@MainActivity)
             builder.setMessage("Yakin Anda ingin Logout?")
             builder.setCancelable(true)
-            builder.setNegativeButton("Batal") { dialog, which -> dialog.cancel() }
-            builder.setPositiveButton("Ya") { dialog, which ->
+            builder.setNegativeButton("Batal") { dialog, _ -> dialog.cancel() }
+            builder.setPositiveButton("Ya") { _, _ ->
                 session.logoutUser()
                 finishAffinity()
             }
@@ -73,5 +69,4 @@ class MainActivity : AppCompatActivity() {
             alertDialog.show()
         }
     }
-
 }

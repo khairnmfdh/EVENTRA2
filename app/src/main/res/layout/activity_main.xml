@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<androidx.appcompat.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageLogout"
         android:layout_width="35dp"
         android:layout_height="35dp"
@@ -60,22 +60,84 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <!-- Semua CardView (cvAbsenMasuk, cvAbsenKeluar, cvPerizinan, cvHistory) kamu sudah benar -->
-            <!-- Tidak ada perubahan di bagian dalam CardView -->
+            <!-- CardView Absen Masuk -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvAbsenMasuk"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                android:padding="16dp">
 
-            <!-- CardView cvAbsenMasuk -->
-            <!-- ... [tidak perlu diulang di sini] ... -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Absensi Masuk"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black" />
 
-            <!-- CardView cvAbsenKeluar -->
-            <!-- ... [tidak perlu diulang di sini] ... -->
+            </androidx.cardview.widget.CardView>
 
-            <!-- CardView cvPerizinan -->
-            <!-- ... [tidak perlu diulang di sini] ... -->
+            <!-- CardView Absen Keluar -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvAbsenKeluar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                android:padding="16dp">
 
-            <!-- CardView cvHistory -->
-            <!-- ... [tidak perlu diulang di sini] ... -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Absensi Keluar"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- CardView Perizinan -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvPerizinan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Perizinan"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- CardView History -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black" />
+
+            </androidx.cardview.widget.CardView>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.core.widget.NestedScrollView>

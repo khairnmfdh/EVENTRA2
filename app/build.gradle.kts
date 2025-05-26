@@ -1,8 +1,8 @@
-import org.jetbrains.kotlin.storage.CacheResetOnProcessCanceled.enabled
-
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android") version "2.1.10"
+
+
 }
 
 android {
@@ -50,29 +50,22 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.runtime.android)
+    implementation(libs.androidx.room.rxjava3)
+
     // Lifecycle Components
     implementation ("androidx.lifecycle:lifecycle-livedata:2.4.1")
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.4.1")
     implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")
 
     // Room Database
-    implementation ("androidx.room:room-rxjava3:2.4.2")
-    implementation ("androidx.room:room-runtime:2.4.2")
 
-    // Glide
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
 
-    // Rx Java
-    implementation ("io.reactivex.rxjava3:rxandroid:3.0.0")
-    implementation ("io.reactivex.rxjava3:rxjava:3.0.0")
 
     // Custom Permission
-    implementation ("com.karumi:dexter:6.2.2")
     implementation ("com.karumi:dexter:6.2.3")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation ("io.reactivex.rxjava3:rxjava:3.1.8")
-    implementation ("io.reactivex.rxjava3:rxandroid:3.0.2")
+    implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

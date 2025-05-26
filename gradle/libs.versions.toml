@@ -13,6 +13,9 @@ exifinterface = "1.4.1"
 playServicesLocation = "21.3.0"
 roomCommonJvm = "2.7.1"
 roomRuntimeAndroid = "2.7.1"
+roomRxjava3 = "2.7.1"
+kotlinPlugin = "2.1.10"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -27,10 +30,11 @@ androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterfa
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
 androidx-room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomRuntimeAndroid" }
+androidx-room-rxjava3 = { group = "androidx.room", name = "room-rxjava3", version.ref = "roomRxjava3" }
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.8.0" }
 android-library = { id = "com.android.library", version = "8.4.1" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version = "1.9.23" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version = "2.1.10" }
 
 
