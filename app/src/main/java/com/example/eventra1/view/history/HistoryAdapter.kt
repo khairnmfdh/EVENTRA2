@@ -21,7 +21,8 @@ import kotlin.Int
 class HistoryAdapter(
     var mContext: Context,
     var modelDatabase: MutableList<ModelDatabase>,
-    var mAdapterCallback: HistoryAdapterCallback) : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
+    var mAdapterCallback: HistoryAdapterCallback
+) : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
 
     fun setDataAdapter(items: List<ModelDatabase>) {
         modelDatabase.clear()

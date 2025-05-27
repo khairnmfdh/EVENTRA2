@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.example.eventra1.database.DatabaseClient.Companion.getInstance
-import com.example.eventra1.database.dao.DatabaseDao
+import com.example.eventra1.database.DatabaseDao
 import com.example.eventra1.model.ModelDatabase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable

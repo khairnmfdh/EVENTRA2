@@ -1,4 +1,4 @@
-package com.example.eventra1.view.main
+package com.example.eventra1.view
 
 import android.content.Intent
 import android.os.Bundle

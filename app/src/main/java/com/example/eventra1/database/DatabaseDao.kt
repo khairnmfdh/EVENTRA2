@@ -1,4 +1,4 @@
-package com.example.eventra1.database.dao
+package com.example.eventra1.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

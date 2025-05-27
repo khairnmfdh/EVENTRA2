@@ -9,7 +9,7 @@
         android:id="@+id/imageLogout"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,7 +20,7 @@
         android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="80dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
             android:gravity="center"
             android:text="Absensi membutuhkan info lokasi dan hanya bisa dilakukan jika kamu Foto Selfie."
             android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:textSize="12sp" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.core.widget.NestedScrollView
@@ -59,25 +59,26 @@
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="25dp">
 
             <!-- CardView Absen Masuk -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cvAbsenMasuk"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100sp"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
-                android:padding="16dp">
+                android:padding="100dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Absensi Masuk"
                     android:textSize="18sp"
+                    android:textAlignment="center"
                     android:textColor="@android:color/black" />
 
             </androidx.cardview.widget.CardView>
@@ -86,17 +87,18 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cvAbsenKeluar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100sp"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
                 android:padding="16dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Absensi Keluar"
                     android:textSize="18sp"
+                    android:textAlignment="center"
                     android:textColor="@android:color/black" />
 
             </androidx.cardview.widget.CardView>
@@ -105,17 +107,18 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cvPerizinan"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100sp"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
                 android:padding="16dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Perizinan"
                     android:textSize="18sp"
+                    android:textAlignment="center"
                     android:textColor="@android:color/black" />
 
             </androidx.cardview.widget.CardView>
@@ -124,17 +127,18 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cvHistory"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100sp"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
                 android:padding="16dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="History"
                     android:textSize="18sp"
+                    android:textAlignment="center"
                     android:textColor="@android:color/black" />
 
             </androidx.cardview.widget.CardView>
