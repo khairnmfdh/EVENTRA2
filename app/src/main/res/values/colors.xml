@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="pink_background">#E9B3AC</color>
+    <color name="cream">#EDE8DA</color>
+    <color name="orange_soft">#D69F88</color>
+    <color name="input_background">#F4E9E5</color>
+    <color name="gray">#999999</color>
+    <color name="gray_dark">#555555</color>
+
 </resources>
