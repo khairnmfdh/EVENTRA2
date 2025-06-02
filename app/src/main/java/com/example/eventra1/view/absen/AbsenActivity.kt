@@ -44,6 +44,44 @@ class AbsenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_absen)
 
+        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+        btnBack.setOnClickListener {
+            val intent = Intent(this@AbsenActivity, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        // Ambil dan tampilkan data profile dari Firebase Realtime Database
+        val tvNama = findViewById<TextView>(R.id.tvNama)
+        val tvProdi = findViewById<TextView>(R.id.tvProdi)
+        val tvFakultas = findViewById<TextView>(R.id.tvFakultas)
+        val tvUniversitas = findViewById<TextView>(R.id.tvUniversitas)
+
+
+
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uid != null) {
+            val profileRef = FirebaseDatabase.getInstance().getReference("profile").child(uid)
+            profileRef.addListenerForSingleValueEvent(object : com.google.firebase.database.ValueEventListener {
+                override fun onDataChange(snapshot: com.google.firebase.database.DataSnapshot) {
+                    val nama = snapshot.child("nama").getValue(String::class.java)
+                    val prodi = snapshot.child("prodi").getValue(String::class.java)
+                    val fakultas = snapshot.child("fakultas").getValue(String::class.java)
+                    val universitas = snapshot.child("universitas").getValue(String::class.java)
+
+                    if (nama != null) tvNama.text = nama
+                    if (prodi != null) tvProdi.text = prodi
+                    if (fakultas != null) tvFakultas.text = fakultas
+                    if (universitas != null) tvUniversitas.text = universitas
+                }
+
+                override fun onCancelled(error: com.google.firebase.database.DatabaseError) {
+                    Toast.makeText(this@AbsenActivity, "Gagal mengambil data profil", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+
+
         val imageProfile = findViewById<ImageView>(R.id.imageProfile)
 
         imageProfile.setOnClickListener {

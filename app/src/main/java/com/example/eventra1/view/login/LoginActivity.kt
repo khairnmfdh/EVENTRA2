@@ -28,7 +28,6 @@ class LoginActivity : AppCompatActivity() {
 
     // Declare variables
     lateinit var btnLogin: MaterialButton
-    lateinit var btnDaftar: MaterialButton
     lateinit var inputNama: EditText
     lateinit var inputPassword: EditText
     lateinit var mAuth: FirebaseAuth
@@ -53,7 +52,6 @@ class LoginActivity : AppCompatActivity() {
         inputNama = findViewById(R.id.inputNama)
         inputPassword = findViewById(R.id.inputPassword)
         btnLogin = findViewById(R.id.btnLogin)
-        btnDaftar = findViewById(R.id.btnDaftar)
         mAuth = FirebaseAuth.getInstance()
 
         setPermission()
@@ -85,10 +83,6 @@ class LoginActivity : AppCompatActivity() {
         if (session.isLoggedIn()) {
             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
             finish()
-        }
-
-        btnDaftar.setOnClickListener {
-            signUp(inputNama.text.toString(), inputPassword.text.toString())
         }
 
         btnLogin.setOnClickListener {

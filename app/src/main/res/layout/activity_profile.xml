@@ -21,10 +21,22 @@
             android:orientation="vertical"
             android:paddingTop="40dp">
 
+            <!-- Tombol Back -->
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginRight="190dp"
+                android:layout_alignParentStart="true"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_back"
+                android:contentDescription="Back" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="70dp"
+                android:layout_marginBottom="85dp"
                 android:letterSpacing="0.15"
                 android:text="PROFILE"
                 android:textColor="@android:color/black"
@@ -53,9 +65,9 @@
                 android:focusable="true" />
 
             <TextView
+                android:id="@+id/textViewNamaDisplay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="JEON WONWOO"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"

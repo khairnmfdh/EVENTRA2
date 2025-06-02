@@ -13,12 +13,24 @@
         android:gravity="center"
         android:background="#EDE8DA">
 
+        <!-- Tombol Back -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="150dp"
+            android:layout_alignParentStart="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_back"
+            android:contentDescription="Back" />
+
         <ImageView
             android:id="@+id/imageProfile"
             android:layout_width="69dp"
             android:layout_height="76dp"
             android:layout_marginLeft="150dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="0dp"
             android:contentDescription="Profil"
             android:src="@drawable/default_profile" />
 
@@ -76,7 +88,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/txtNama"
+                        android:id="@+id/tvNama"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="JEON WONWOO"
@@ -85,9 +97,28 @@
                         android:textColor="#000000" />
 
                     <TextView
+                        android:id="@+id/tvProdi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Teknologi Informasi\nFakultas Ilmu Komputer\nUniversitas Brawijaya"
+                        android:text="TI"
+                        android:textColor="#555555"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp" />
+
+                    <TextView
+                        android:id="@+id/tvFakultas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FILKOM"
+                        android:textColor="#555555"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp" />
+
+                    <TextView
+                        android:id="@+id/tvUniversitas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="nUniversitas Brawijaya"
                         android:textColor="#555555"
                         android:textSize="14sp"
                         android:layout_marginTop="4dp" />

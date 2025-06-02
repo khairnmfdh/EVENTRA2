@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.eventra1.ProfileActivity
@@ -21,10 +22,16 @@ import com.google.android.gms.cast.framework.SessionManager
 import com.google.firebase.auth.FirebaseAuth
 import com.example.eventra1.databinding.ActivityMainBinding
 import com.example.eventra1.databinding.CardCyberBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var textViewNamaDisplay: TextView
 
     data class Kegiatan(val id: View, val nama: String)
 
@@ -33,6 +40,31 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Inisialisasi view dari layout
+        textViewNamaDisplay = findViewById(R.id.textViewNamaDisplay)
+
+
+
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uid != null) {
+            val databaseRef = FirebaseDatabase.getInstance()
+                .getReference("profile")
+                .child(uid)
+
+            databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val nama = snapshot.child("nama").getValue(String::class.java)
+                    if (nama != null) {
+                        textViewNamaDisplay.text = "Hello, $nama!"
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(this@MainActivity, "Gagal ambil data", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
 
         val kegiatanList = listOf(
             Kegiatan(findViewById(R.id.cardCyber), "Workshop Cyber Security"),
