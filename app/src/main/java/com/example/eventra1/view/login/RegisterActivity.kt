@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +18,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
-class LoginActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity() {
 
     lateinit var session: SessionLogin
     lateinit var strNama: String
@@ -27,10 +26,10 @@ class LoginActivity : AppCompatActivity() {
     var REQ_PERMISSION = 101
 
     // Declare variables
-    lateinit var btnLogin: MaterialButton
     lateinit var btnDaftar: MaterialButton
     lateinit var inputNama: EditText
     lateinit var inputPassword: EditText
+    lateinit var inputConfirmPass: EditText
     lateinit var mAuth: FirebaseAuth
 
 
@@ -38,21 +37,13 @@ class LoginActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_register)
 
-        // INISIALISASI SESSION HARUS DULUAN
-        session = SessionLogin(applicationContext)
-
-        // Baru lakukan pengecekan
-        if (session.isLoggedIn()) {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-        }
 
         // Inisialisasi view lainnya
         inputNama = findViewById(R.id.inputNama)
         inputPassword = findViewById(R.id.inputPassword)
-        btnLogin = findViewById(R.id.btnLogin)
+        inputConfirmPass = findViewById(R.id.confirmPassword)
         btnDaftar = findViewById(R.id.btnDaftar)
         mAuth = FirebaseAuth.getInstance()
 
@@ -83,30 +74,18 @@ class LoginActivity : AppCompatActivity() {
         session = SessionLogin(applicationContext)
 
         if (session.isLoggedIn()) {
-            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            startActivity(Intent(this@RegisterActivity, MainActivity::class.java))
             finish()
         }
 
         btnDaftar.setOnClickListener {
-            signUp(inputNama.text.toString(), inputPassword.text.toString())
+            signUp(inputNama.text.toString(), inputPassword.text.toString(), inputConfirmPass.text.toString())
         }
-
-        btnLogin.setOnClickListener {
-            val email = inputNama.text.toString()
-            val password = inputPassword.text.toString()
-
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Form tidak boleh kosong!", Toast.LENGTH_SHORT).show()
-            } else {
-                login(email, password) // Firebase Login
-            }
-        }
-
 
     }
 
-    fun signUp(email: String?, password: String?) {
-        if (!validateForm()) return
+    fun signUp(email: String?, password: String?, confirmPass: String?) {
+        if (!validateForm(password!!, confirmPass!!)) return
 
         mAuth.createUserWithEmailAndPassword(email!!, password!!)
             .addOnCompleteListener(this) { task ->
@@ -129,48 +108,9 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    fun login(email: String?, password: String?) {
-        if (!validateForm()) return
-
-        mAuth.signInWithEmailAndPassword(email!!, password!!)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    val user = mAuth.currentUser
-                    Toast.makeText(this, "Login berhasil: ${user?.email}", Toast.LENGTH_SHORT)
-                        .show()
-                    updateUILogin(user)
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Authentication failed: ${task.exception?.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    updateUILogin(null)
-                }
-            }
-
-
-        fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<String>,
-            grantResults: IntArray
-        ) {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-            for (grantResult in grantResults) {
-                if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                    val intent = intent
-                    finish()
-                    startActivity(intent)
-                }
-            }
-        }
-
-        fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-    fun validateForm(): Boolean {
+    fun validateForm(password: String, confirmPass: String): Boolean {
         var result = true
+
         if (TextUtils.isEmpty(inputNama.text.toString())) {
             inputNama.error = "Required"
             result = false
@@ -178,14 +118,27 @@ class LoginActivity : AppCompatActivity() {
             inputNama.error = null
         }
 
-        if (TextUtils.isEmpty(inputPassword.text.toString())) {
+        if (TextUtils.isEmpty(password)) {
             inputPassword.error = "Required"
             result = false
         } else {
             inputPassword.error = null
         }
+
+        if (TextUtils.isEmpty(confirmPass)) {
+            inputConfirmPass.error = "Required"
+            result = false
+        } else if (password != confirmPass) {
+            inputConfirmPass.error = "Password tidak cocok"
+            result = false
+        } else {
+            inputConfirmPass.error = null
+        }
+
         return result
     }
+
+
 
     fun updateUIDaftar(user: FirebaseUser?) {
         if (user != null) {
@@ -198,14 +151,5 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Sign Up In First", Toast.LENGTH_SHORT).show()
         }
     }
-    fun updateUILogin(user: FirebaseUser?) {
-        Log.d("Login", "User: $user")
-        if (user != null) {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        } else {
-            Toast.makeText(this, "Log In First", Toast.LENGTH_SHORT).show()
-        }
-    }
+
 }

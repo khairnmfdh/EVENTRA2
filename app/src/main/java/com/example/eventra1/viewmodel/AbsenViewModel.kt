@@ -1,32 +1,53 @@
 package com.example.eventra1.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import com.example.eventra1.database.DatabaseClient
-import com.example.eventra1.database.DatabaseDao
-import com.example.eventra1.model.ModelDatabase
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.schedulers.Schedulers
+import com.google.firebase.database.FirebaseDatabase
+
+data class FirebaseAbsensi(
+    var nama: String = "",
+    var fotoSelfie: String = "",
+    var tanggal: String = "",
+    var lokasi: String = "",
+    var keterangan: String = ""
+)
 
 class AbsenViewModel(application: Application) : AndroidViewModel(application) {
-    var databaseDao: DatabaseDao? = DatabaseClient.getInstance(application)?.appDatabase?.databaseDao()
+
+    private val firebaseDb = FirebaseDatabase.getInstance()
+    private val absensiRef = firebaseDb.getReference("absensi") // node utama di Realtime DB
 
     fun addDataAbsen(
-        foto: String, nama: String,
-        tanggal: String, lokasi: String, keterangan: String) {
-        Completable.fromAction {
-            val modelDatabase = ModelDatabase()
-            modelDatabase.fotoSelfie = foto
-            modelDatabase.nama = nama
-            modelDatabase.tanggal = tanggal
-            modelDatabase.lokasi = lokasi
-            modelDatabase.keterangan = keterangan
-            databaseDao?.insertData(modelDatabase)
-        }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
-    }
+        foto: String,
+        nama: String,
+        tanggal: String,
+        lokasi: String,
+        keterangan: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val data = FirebaseAbsensi(
+            nama = nama,
+            fotoSelfie = foto,
+            tanggal = tanggal,
+            lokasi = lokasi,
+            keterangan = keterangan
+        )
 
+        val key = absensiRef.push().key
+        if (key != null) {
+            absensiRef.child(key).setValue(data)
+                .addOnSuccessListener {
+                    Log.d("AbsenViewModel", "Data berhasil disimpan ke Firebase")
+                    onSuccess()
+                }
+                .addOnFailureListener { e ->
+                    Log.e("AbsenViewModel", "Gagal menyimpan ke Firebase: ${e.message}")
+                    onFailure(e)
+                }
+        } else {
+            onFailure(Exception("Key Firebase null"))
+        }
+    }
 }

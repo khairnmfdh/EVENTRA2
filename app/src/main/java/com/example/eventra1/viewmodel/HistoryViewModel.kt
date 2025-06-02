@@ -1,3 +1,4 @@
+/*
 package com.example.eventra1.viewmodel
 
 import android.app.Application
@@ -26,4 +27,4 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
     init {
         dataLaporan = databaseDao!!.getAllHistory()
     }
-}
+}*/

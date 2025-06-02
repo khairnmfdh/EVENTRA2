@@ -1,3 +1,4 @@
+/*
 package com.example.eventra1.database
 
 import android.content.Context
@@ -21,4 +22,4 @@ class DatabaseClient private constructor(context: Context) {
         }
     }
 
-}
+}*/

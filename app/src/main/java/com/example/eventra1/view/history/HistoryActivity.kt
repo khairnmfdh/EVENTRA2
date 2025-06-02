@@ -1,30 +1,27 @@
 package com.example.eventra1.view.history
 
-import android.content.DialogInterface
+import ModelAbsensi
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.eventra1.R
 import com.example.eventra1.databinding.ActivityHistoryBinding
-import com.example.eventra1.model.ModelDatabase
 import com.example.eventra1.view.history.HistoryAdapter.HistoryAdapterCallback
-import com.example.eventra1.viewmodel.HistoryViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 
-class HistoryActivity : AppCompatActivity(), HistoryAdapterCallback {
-    var modelDatabaseList: MutableList<ModelDatabase> = ArrayList()
-    lateinit var historyAdapter: HistoryAdapter
-    lateinit var historyViewModel: HistoryViewModel
-    val tvNotFound = findViewById<TextView>(R.id.tvNotFound)
-    val rvHistory = binding.rvHistory
-
+class HistoryActivity : AppCompatActivity(), HistoryAdapter.HistoryAdapterCallback {
 
     private lateinit var binding: ActivityHistoryBinding
+    private lateinit var historyAdapter: HistoryAdapter
+    private val user = FirebaseAuth.getInstance().currentUser
+    private lateinit var databaseRef: DatabaseReference
+    private val absensiList = mutableListOf<ModelAbsensi>() // list untuk menampung data
+    // Inisialisasi adapter secara lateinit
+    private lateinit var adapter: HistoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,53 +29,77 @@ class HistoryActivity : AppCompatActivity(), HistoryAdapterCallback {
         setContentView(binding.root)
 
         setInitLayout()
-        setViewModel()
+        setupRecyclerView()
+
+        // Inisialisasi adapter di onCreate() dan set ke RecyclerView
+        adapter = HistoryAdapter(this, absensiList, this)
+        binding.rvHistory.adapter = adapter
+
+        fetchAbsensiFromRealtimeDatabase()
     }
 
     private fun setInitLayout() {
-
-
         setSupportActionBar(binding.toolbar)
-        if (supportActionBar != null) {
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            supportActionBar?.setDisplayShowTitleEnabled(false)
-        }
-
-        tvNotFound.visibility = View.GONE
-
-        historyAdapter = HistoryAdapter(this, modelDatabaseList, this)
-        rvHistory.setHasFixedSize(true)
-        rvHistory.layoutManager = LinearLayoutManager(this)
-        rvHistory.adapter = historyAdapter
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        binding.tvNotFound.visibility = View.GONE
     }
 
-    private fun setViewModel() {
-        historyViewModel = ViewModelProviders.of(this).get(HistoryViewModel::class.java)
-        historyViewModel.dataLaporan.observe(this) { modelDatabases: List<ModelDatabase> ->
-            if (modelDatabases.isEmpty()) {
-                tvNotFound.visibility = View.VISIBLE
-                rvHistory.visibility = View.GONE
-            } else {
-                tvNotFound.visibility = View.GONE
-                rvHistory.visibility = View.VISIBLE
+    private fun setupRecyclerView() {
+        binding.rvHistory.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun fetchAbsensiFromRealtimeDatabase() {
+        databaseRef = FirebaseDatabase.getInstance().getReference("absensi")
+        val currentUid = user?.uid ?: return
+        databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                absensiList.clear() // bersihkan data lama
+                for (childSnapshot in snapshot.children) {
+                    val absensi = childSnapshot.getValue(ModelAbsensi::class.java)
+                    if (absensi != null && absensi.uid == currentUid) {
+                        absensiList.add(absensi)
+                        Log.d("FirebaseData", "Jumlah data: ${absensiList.size}")
+                    } else{
+                        Log.d("FirebaseData", "Jumlah data: ${absensiList.size}")
+                    }
+                }
+                // Update data ke adapter
+                adapter.setData(absensiList)
+
+                // Tampilkan pesan jika list kosong
+                if (absensiList.isEmpty()) {
+                    binding.tvNotFound.visibility = View.VISIBLE
+                    binding.rvHistory.visibility = View.GONE
+                } else {
+                    binding.tvNotFound.visibility = View.GONE
+                    binding.rvHistory.visibility = View.VISIBLE
+                }
             }
-            historyAdapter.setDataAdapter(modelDatabases)
-        }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@HistoryActivity, "Gagal mengambil data", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
-    override fun onDelete(modelDatabase: ModelDatabase?) {
-        val alertDialogBuilder = AlertDialog.Builder(this)
-        alertDialogBuilder.setMessage("Hapus riwayat ini?")
-        alertDialogBuilder.setPositiveButton("Ya, Hapus") { dialogInterface, i ->
-            val uid = modelDatabase!!.uid
-            historyViewModel.deleteDataById(uid)
-            Toast.makeText(this@HistoryActivity, "Yeay! Data yang dipilih sudah dihapus",
-                Toast.LENGTH_SHORT).show()
+    override fun onDelete(model: ModelAbsensi?) {
+        model?.let {
+            val query = databaseRef.orderByChild("timestamp").equalTo(it.timestamp)
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (child in snapshot.children) {
+                        child.ref.removeValue()
+                    }
+                    Toast.makeText(this@HistoryActivity, "Data dihapus", Toast.LENGTH_SHORT).show()
+                    fetchAbsensiFromRealtimeDatabase()
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(this@HistoryActivity, "Gagal menghapus data", Toast.LENGTH_SHORT).show()
+                }
+            })
         }
-        alertDialogBuilder.setNegativeButton("Batal") { dialogInterface: DialogInterface, i:
-        Int -> dialogInterface.cancel() }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

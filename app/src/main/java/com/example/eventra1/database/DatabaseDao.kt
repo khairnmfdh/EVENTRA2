@@ -1,3 +1,4 @@
+/*
 package com.example.eventra1.database
 
 import androidx.lifecycle.LiveData
@@ -20,4 +21,4 @@ interface DatabaseDao {
 
     @Query("DELETE FROM tbl_absensi")
     fun deleteAllHistory()
-}
+}*/
