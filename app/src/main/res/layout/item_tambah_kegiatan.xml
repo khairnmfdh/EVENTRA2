@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    card_view:cardCornerRadius="16dp"
+    card_view:cardElevation="4dp"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#EFF7D7"> <!-- Hijau muda -->
+
+        <TextView
+            android:id="@+id/tvNamaKegiatan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Workshop Cyber Security"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/tvTanggalKegiatan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DATE : YYYY-MM-DD"
+            android:textColor="#333333"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvStatusAbsen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="STATUS : BELUM ABSEN"
+            android:textSize="14sp"
+            android:layout_marginTop="2dp"
+            android:textStyle="bold"
+            android:textColor="#F57C00" /> <!-- Orange -->
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTambah"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:backgroundTint="#D69F88"
+            android:text="Add" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

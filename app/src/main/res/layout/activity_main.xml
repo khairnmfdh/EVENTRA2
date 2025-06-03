@@ -1,98 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#F9F5EF">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <!-- Pojok kiri atas -->
+    <ImageView
+        android:id="@+id/pojok"
+        android:layout_width="250dp"
+        android:layout_height="300dp"
+        android:src="@drawable/pojok"
+        android:gravity="start"
+        android:layout_marginTop="-30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Icon profil tengah -->
+    <ImageView
+        android:id="@+id/imageProfile"
+        android:layout_width="69dp"
+        android:layout_height="76dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/default_profile"
+        android:contentDescription="Profil"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Icon kanan atas -->
+    <ImageView
+        android:id="@+id/roundut"
+        android:layout_width="230dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/roundut3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Kontainer teks dan tombol -->
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="0dp">
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_marginTop="200dp"
+        app:layout_constraintTop_toBottomOf="@id/imageProfile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Pojok kiri atas -->
-        <ImageView
-            android:id="@+id/pojok"
-            android:layout_width="250dp"
-            android:layout_height="300dp"
-            android:src="@drawable/pojok"
-            android:scaleType="fitStart"
-            android:layout_marginTop="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- Icon profil tengah -->
-        <ImageView
-            android:id="@+id/imageProfile"
-            android:layout_width="69dp"
-            android:layout_height="76dp"
-            android:layout_marginTop="40dp"
-            android:src="@drawable/default_profile"
-            android:contentDescription="Profil"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <!-- Icon kanan atas -->
-        <ImageView
-            android:id="@+id/roundut"
-            android:layout_width="230dp"
-            android:layout_height="220dp"
+        <TextView
+            android:id="@+id/textViewNamaDisplay"
+            android:textSize="24sp"
+            android:textStyle="bold"
             android:layout_marginTop="16dp"
-            android:src="@drawable/roundut3"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-        <!-- LinearLayout konten -->
+        <TextView
+            android:text="See your activities"
+            android:textSize="14sp"
+            android:layout_marginBottom="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <LinearLayout
-            android:id="@+id/container"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="260dp"
-            android:padding="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/imageProfile"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="8dp">
 
-            <TextView
-                android:id="@+id/textViewNamaDisplay"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_marginTop="16dp"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTambahKegiatan"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:text="See your activities"
-                android:textSize="14sp"
-                android:layout_marginBottom="24dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:text="ACTIVITIES"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_marginBottom="12dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <!-- Card: Cyber -->
-            <include
-                android:id="@+id/cardCyber"
-                layout="@layout/card_cyber" />
-
-            <!-- Card: Mobile -->
-            <include
-                android:id="@+id/cardMobile"
-                layout="@layout/card_mobile" />
-
-            <!-- Card: Excel -->
-            <include
-                android:id="@+id/cardExcel"
-                layout="@layout/card_excel" />
+                android:layout_height="wrap_content"
+                android:backgroundTint="#D69F88"
+                android:text="Add Activity" />
         </LinearLayout>
+    </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+    <!-- RecyclerView DIPINDAH KELUAR -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewKegiatan"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="16dp"
+        android:background="#F9F5EF"
+        app:layout_constraintTop_toBottomOf="@id/container"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
