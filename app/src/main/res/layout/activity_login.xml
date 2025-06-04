@@ -27,7 +27,7 @@
         android:layout_width="280dp"
         android:layout_height="230dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="-5dp"
         android:src="@drawable/logo" />
 
     <!-- Login Form -->
@@ -54,8 +54,8 @@
             android:textStyle="bold"
             android:textSize="20sp"
             android:textColor="@android:color/black"
-            android:layout_marginTop="60dp"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginTop="90dp"
+            android:layout_marginBottom="30dp" />
 
         <!-- Email Input -->
         <com.google.android.material.textfield.TextInputLayout
@@ -115,26 +115,26 @@
             android:layout_marginBottom="30dp" />
 
         <!-- Submit Button -->
-      <com.google.android.material.button.MaterialButton
-          android:id="@+id/btnLogin"
-          android:layout_width="match_parent"
-          android:layout_height="60dp"
-          android:text="MASUK"
-          android:textAllCaps="true"
-          android:textColor="@color/white"
-          android:textStyle="bold"
-          android:backgroundTint="#D69F88"
-          app:cornerRadius="30dp"
-          app:elevation="5dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="MASUK"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:backgroundTint="#D69F88"
+            app:cornerRadius="30dp"
+            app:elevation="5dp" />
 
-    </LinearLayout>
+      </LinearLayout>
     </ScrollView>
 
     <!-- Ilustrasi bawah -->
     <ImageView
         android:id="@+id/imgBottomMascot"
-        android:layout_width="180dp"
-        android:layout_height="160dp"
+        android:layout_width="200dp"
+        android:layout_height="180dp"
         android:layout_marginTop="5dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"

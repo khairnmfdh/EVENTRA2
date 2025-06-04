@@ -1,18 +1,15 @@
 package com.example.eventra1.view.absen
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.widget.*
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.example.eventra1.ProfileActivity
+import com.example.eventra1.view.profile.ProfileActivity
 import com.example.eventra1.R
 import com.example.eventra1.view.main.MainActivity
 import com.google.android.material.button.MaterialButton
@@ -56,6 +53,9 @@ class AbsenActivity : AppCompatActivity() {
         val tvProdi = findViewById<TextView>(R.id.tvProdi)
         val tvFakultas = findViewById<TextView>(R.id.tvFakultas)
         val tvUniversitas = findViewById<TextView>(R.id.tvUniversitas)
+        val tvTitle = findViewById<TextView>(R.id.tvTitle)
+
+
 
 
 

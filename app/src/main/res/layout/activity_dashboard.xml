@@ -27,7 +27,7 @@
             android:layout_width="280dp"
             android:layout_height="230dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="-5dp"
             android:src="@drawable/logo" />
 
         <!-- Login Form -->
@@ -90,8 +90,8 @@
         <!-- Ilustrasi bawah -->
         <ImageView
             android:id="@+id/imgBottomMascot"
-            android:layout_width="180dp"
-            android:layout_height="160dp"
+            android:layout_width="200dp"
+            android:layout_height="180dp"
             android:layout_marginTop="5dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"

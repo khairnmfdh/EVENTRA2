@@ -30,10 +30,10 @@ class KegiatanAdapter(
         val kegiatan = listKegiatan[position]
         holder.tvNamaKegiatan.text = kegiatan.nama
         holder.tvTanggalKegiatan.text = "DATE : ${kegiatan.tanggal}"
-        holder.tvStatusKegiatan.text = "STATUS : ${kegiatan.status.uppercase()}"
+        holder.tvStatusKegiatan.text = "STATUS : ${kegiatan.status?.uppercase()}"
 
         // Ganti warna teks status berdasarkan isi status
-        when (kegiatan.status.lowercase()) {
+        when (kegiatan.status?.lowercase()) {
             "belum absen" -> holder.tvStatusKegiatan.setTextColor(Color.parseColor("#FF8800"))
             "hadir" -> holder.tvStatusKegiatan.setTextColor(Color.parseColor("#009688"))
             "alpha" -> holder.tvStatusKegiatan.setTextColor(Color.parseColor("#D32F2F"))

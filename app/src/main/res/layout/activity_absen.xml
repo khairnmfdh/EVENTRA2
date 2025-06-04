@@ -91,7 +91,6 @@
                         android:id="@+id/tvNama"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="JEON WONWOO"
                         android:textStyle="bold"
                         android:textSize="16sp"
                         android:textColor="#000000" />
@@ -100,7 +99,6 @@
                         android:id="@+id/tvProdi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TI"
                         android:textColor="#555555"
                         android:textSize="14sp"
                         android:layout_marginTop="4dp" />
@@ -109,7 +107,6 @@
                         android:id="@+id/tvFakultas"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="FILKOM"
                         android:textColor="#555555"
                         android:textSize="14sp"
                         android:layout_marginTop="4dp" />
@@ -118,7 +115,6 @@
                         android:id="@+id/tvUniversitas"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="nUniversitas Brawijaya"
                         android:textColor="#555555"
                         android:textSize="14sp"
                         android:layout_marginTop="4dp" />

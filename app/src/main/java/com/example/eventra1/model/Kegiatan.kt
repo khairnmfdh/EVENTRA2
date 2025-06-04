@@ -4,6 +4,6 @@ data class Kegiatan(
     var id: String? = null,
     var nama: String? = null,
     var tanggal: String? = null,
-    var status: String = "belum absen"
+    var status: String? = null // ← Tambahan
 )
 

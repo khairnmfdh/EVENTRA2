@@ -5,8 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.eventra1.ProfileActivity
-import com.example.eventra1.R
+import com.example.eventra1.view.profile.ProfileActivity
 import com.example.eventra1.databinding.ActivityMainBinding
 import com.example.eventra1.kegiatan.KegiatanAdapter
 import com.example.eventra1.kegiatan.TambahKegiatanActivity
@@ -72,11 +71,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         kegiatanAdapter = KegiatanAdapter(kegiatanList) { kegiatan ->
-            kegiatan.nama?.let { bukaActivityAbsen(it) }
+            val namaKegiatan = kegiatan.nama
+            if (!namaKegiatan.isNullOrEmpty()) {
+                bukaActivityAbsen(namaKegiatan)
+            } else {
+                Toast.makeText(this, "Nama kegiatan tidak tersedia", Toast.LENGTH_SHORT).show()
+            }
         }
         binding.recyclerViewKegiatan.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewKegiatan.adapter = kegiatanAdapter
     }
+
 
     private fun loadKegiatanUser() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -134,9 +139,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun bukaActivityAbsen(namaKegiatan: String) {
         val intent = Intent(this, AbsenActivity::class.java)
-        intent.putExtra("NAMA_KEGIATAN", namaKegiatan)
+        intent.putExtra("nama_kegiatan", namaKegiatan)
         startActivity(intent)
     }
+
 
     private fun logoutUser() {
         FirebaseAuth.getInstance().signOut()

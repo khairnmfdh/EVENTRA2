@@ -11,7 +11,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.example.eventra1.ProfileActivity
+import com.example.eventra1.view.profile.ProfileActivity
 import com.example.eventra1.R
 import com.example.eventra1.utils.SessionLogin
 import com.example.eventra1.view.main.MainActivity

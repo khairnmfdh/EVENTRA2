@@ -3,9 +3,7 @@ package com.example.eventra1.utils
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.widget.Toast
-import com.example.eventra1.view.Dashboard
-import com.example.eventra1.view.login.LoginActivity
+import com.example.eventra1.view.login.Dashboard
 import com.example.eventra1.view.main.MainActivity
 
 class SessionLogin(private val context: Context) {
