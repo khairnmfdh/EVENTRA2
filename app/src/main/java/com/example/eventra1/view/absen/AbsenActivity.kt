@@ -18,7 +18,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -41,6 +44,26 @@ class AbsenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_absen)
 
+        val tvTitle = findViewById<TextView>(R.id.tvTitle)
+        val kegiatanId = intent.getStringExtra("id_kegiatan")
+
+        if (kegiatanId != null) {
+            val ref = FirebaseDatabase.getInstance().getReference("kegiatan_umum").child(kegiatanId)
+            ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val namaKegiatan = snapshot.child("nama").getValue(String::class.java)
+                    if (namaKegiatan != null) {
+                        tvTitle.text = namaKegiatan
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(this@AbsenActivity, "Gagal ambil nama kegiatan", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+
+
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
         btnBack.setOnClickListener {
             val intent = Intent(this@AbsenActivity, MainActivity::class.java)
@@ -53,7 +76,6 @@ class AbsenActivity : AppCompatActivity() {
         val tvProdi = findViewById<TextView>(R.id.tvProdi)
         val tvFakultas = findViewById<TextView>(R.id.tvFakultas)
         val tvUniversitas = findViewById<TextView>(R.id.tvUniversitas)
-        val tvTitle = findViewById<TextView>(R.id.tvTitle)
 
 
 

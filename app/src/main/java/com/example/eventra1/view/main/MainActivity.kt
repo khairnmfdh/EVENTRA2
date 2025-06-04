@@ -71,16 +71,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         kegiatanAdapter = KegiatanAdapter(kegiatanList) { kegiatan ->
-            val namaKegiatan = kegiatan.nama
-            if (!namaKegiatan.isNullOrEmpty()) {
-                bukaActivityAbsen(namaKegiatan)
-            } else {
-                Toast.makeText(this, "Nama kegiatan tidak tersedia", Toast.LENGTH_SHORT).show()
-            }
+            kegiatan.id?.let { bukaActivityAbsen(it) }  // Kirim ID, bukan nama
         }
         binding.recyclerViewKegiatan.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewKegiatan.adapter = kegiatanAdapter
     }
+
 
 
     private fun loadKegiatanUser() {
@@ -137,11 +133,13 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private fun bukaActivityAbsen(namaKegiatan: String) {
+    private fun bukaActivityAbsen(kegiatanId: String) {
         val intent = Intent(this, AbsenActivity::class.java)
-        intent.putExtra("nama_kegiatan", namaKegiatan)
+        intent.putExtra("id_kegiatan", kegiatanId)
         startActivity(intent)
     }
+
+
 
 
     private fun logoutUser() {
