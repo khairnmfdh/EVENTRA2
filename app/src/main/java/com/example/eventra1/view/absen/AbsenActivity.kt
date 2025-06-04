@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -189,34 +190,98 @@ class AbsenActivity : AppCompatActivity() {
         } ?: onComplete("") // Jika tidak ada gambar, tetap lanjut
     }
 
-    private fun saveAbsenToFirestore(imageUrl: String, lokasi: String) {
-        val absenData = mapOf<String, Any>(
-            "uid" to (user?.uid ?: ""),
-            "status" to (selectedStatus ?: ""),
-            "lokasi" to lokasi,
-            "imageUrl" to imageUrl,
-            "timestamp" to SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-        )
+    fun ambilDataKegiatan() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val kegiatanUserRef = FirebaseDatabase.getInstance().getReference("kegiatan_user").child(userId!!)
 
-        firestore.collection("absensi")
-            .add(absenData)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Absen berhasil!", Toast.LENGTH_SHORT).show()
+        kegiatanUserRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (kegiatanSnapshot in snapshot.children) {
+                    val kegiatanId = kegiatanSnapshot.key
 
-                // ✅ Panggil fungsi Realtime Database dengan tipe data yang sesuai
-                saveAbsenToRealtimeDatabase(absenData)
+                    // Ambil nama kegiatan dari kegiatan_umum
+                    val kegiatanUmumRef = FirebaseDatabase.getInstance().getReference("kegiatan_umum").child(kegiatanId!!)
+                    kegiatanUmumRef.child("nama").addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(namaSnapshot: DataSnapshot) {
+                            val namaKegiatan = namaSnapshot.getValue(String::class.java)
+                            Log.d("Firebase", "Nama kegiatan: $namaKegiatan")
+                            // Lakukan sesuatu dengan namaKegiatan
+                        }
 
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
+                        override fun onCancelled(error: DatabaseError) {
+                            Log.e("Firebase", "Gagal ambil nama kegiatan: ${error.message}")
+                        }
+                    })
+                }
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Gagal menyimpan data", Toast.LENGTH_SHORT).show()
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Gagal ambil kegiatan_user: ${error.message}")
             }
+        })
     }
 
+
+
+    private fun saveAbsenToFirestore(imageUrl: String, lokasi: String) {
+        val kegiatanId = intent.getStringExtra("id_kegiatan")
+        if (kegiatanId.isNullOrEmpty()) {
+            Toast.makeText(this, "ID kegiatan tidak ditemukan", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Ambil nama kegiatan dulu dari Realtime Database
+        val kegiatanRef = FirebaseDatabase.getInstance().getReference("kegiatan_umum").child(kegiatanId)
+        kegiatanRef.child("nama").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val namaKegiatan = snapshot.getValue(String::class.java) ?: "Tidak diketahui"
+
+                // Siapkan data absen setelah nama kegiatan berhasil diambil
+                val absenData = mapOf<String, Any>(
+                    "uid" to (user?.uid ?: ""),
+                    "kegiatan" to namaKegiatan,
+                    "status" to (selectedStatus ?: ""),
+                    "lokasi" to lokasi,
+                    "imageUrl" to imageUrl,
+                    "timestamp" to SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+                )
+
+                firestore.collection("absensi")
+                    .add(absenData)
+                    .addOnSuccessListener {
+                        Toast.makeText(this@AbsenActivity, "Absen berhasil!", Toast.LENGTH_SHORT).show()
+
+                        // Simpan juga ke Realtime DB
+                        saveAbsenToRealtimeDatabase(absenData)
+
+                        setResult(RESULT_OK)
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this@AbsenActivity, "Gagal menyimpan data", Toast.LENGTH_SHORT).show()
+                    }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@AbsenActivity, "Gagal mengambil nama kegiatan", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
     private fun saveAbsenToRealtimeDatabase(absenData: Map<String, Any>) {
-        val databaseRef = FirebaseDatabase.getInstance().getReference("absensi")
-        databaseRef.push().setValue(absenData)
+        val kegiatanId = intent.getStringExtra("id_kegiatan") ?: return
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        val databaseRef = FirebaseDatabase.getInstance()
+            .getReference("absensi")
+            .child(kegiatanId)
+            .child(uid)
+
+        // Hapus key 'uid' dan 'kegiatan' dari data yang akan disimpan (sudah tergambar dari struktur)
+        val cleanedData = absenData.filterKeys { it != "uid" && it != "kegiatan" }
+
+        databaseRef.setValue(cleanedData)
             .addOnSuccessListener {
                 Toast.makeText(this, "Juga disimpan ke Realtime Database!", Toast.LENGTH_SHORT).show()
             }
@@ -224,4 +289,5 @@ class AbsenActivity : AppCompatActivity() {
                 Toast.makeText(this, "Gagal simpan ke Realtime DB", Toast.LENGTH_SHORT).show()
             }
     }
+
 }

@@ -1,6 +1,6 @@
 package com.example.eventra1.view.history
 
-import ModelAbsensi
+import Absensi
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventra1.databinding.ActivityHistoryBinding
-import com.example.eventra1.view.history.HistoryAdapter.HistoryAdapterCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
@@ -19,7 +18,7 @@ class HistoryActivity : AppCompatActivity(), HistoryAdapter.HistoryAdapterCallba
     private lateinit var historyAdapter: HistoryAdapter
     private val user = FirebaseAuth.getInstance().currentUser
     private lateinit var databaseRef: DatabaseReference
-    private val absensiList = mutableListOf<ModelAbsensi>() // list untuk menampung data
+    private val absensiList = mutableListOf<Absensi>() // list untuk menampung data
     // Inisialisasi adapter secara lateinit
     private lateinit var adapter: HistoryAdapter
 
@@ -56,7 +55,7 @@ class HistoryActivity : AppCompatActivity(), HistoryAdapter.HistoryAdapterCallba
             override fun onDataChange(snapshot: DataSnapshot) {
                 absensiList.clear() // bersihkan data lama
                 for (childSnapshot in snapshot.children) {
-                    val absensi = childSnapshot.getValue(ModelAbsensi::class.java)
+                    val absensi = childSnapshot.getValue(Absensi::class.java)
                     if (absensi != null && absensi.uid == currentUid) {
                         absensiList.add(absensi)
                         Log.d("FirebaseData", "Jumlah data: ${absensiList.size}")
@@ -83,7 +82,7 @@ class HistoryActivity : AppCompatActivity(), HistoryAdapter.HistoryAdapterCallba
         })
     }
 
-    override fun onDelete(model: ModelAbsensi?) {
+    override fun onDelete(model: Absensi?) {
         model?.let {
             val query = databaseRef.orderByChild("timestamp").equalTo(it.timestamp)
             query.addListenerForSingleValueEvent(object : ValueEventListener {

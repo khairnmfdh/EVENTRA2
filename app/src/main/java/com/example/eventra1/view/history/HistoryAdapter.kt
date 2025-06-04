@@ -7,20 +7,20 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventra1.R
-import ModelAbsensi
+import Absensi
 
 class HistoryAdapter(
     private val context: Context,
-    private var data: List<ModelAbsensi>,
+    private var data: List<Absensi>,
     private val callback: HistoryAdapterCallback
 ) : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
 
     interface HistoryAdapterCallback {
-        fun onDelete(model: ModelAbsensi?)
+        fun onDelete(model: Absensi?)
         // Tambahkan fungsi lain jika dibutuhkan, misalnya onClick
     }
 
-    fun setData(newData: List<ModelAbsensi>) {
+    fun setData(newData: List<Absensi>) {
         this.data = newData
         notifyDataSetChanged()
     }

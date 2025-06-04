@@ -1,4 +1,4 @@
-data class ModelAbsensi(
+data class Absensi(
     val status: String = "",
     val lokasi: String = "",
     val imageUrl: String = "",
@@ -6,7 +6,7 @@ data class ModelAbsensi(
     val uid: String = ""
 ) {
     companion object {
-        fun toMap(modelAbsensi: ModelAbsensi): Map<String, Any> {
+        fun toMap(modelAbsensi: Absensi): Map<String, Any> {
             return mapOf(
                 "status" to modelAbsensi.status,
                 "lokasi" to modelAbsensi.lokasi,

@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val userRef = FirebaseDatabase.getInstance().getReference("kegiatan_user").child(uid)
         val umumRef = FirebaseDatabase.getInstance().getReference("kegiatan_umum")
+        val absensiRef = FirebaseDatabase.getInstance().getReference("absensi")
 
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -99,16 +100,26 @@ class MainActivity : AppCompatActivity() {
                             val kegiatanSnapshot = allSnapshot.child(id)
                             val kegiatan = kegiatanSnapshot.getValue(Kegiatan::class.java)
                             kegiatan?.id = id
+
                             if (kegiatan != null) {
-                                kegiatanList.add(kegiatan)
-                                println("Ditemukan kegiatan: ${kegiatan.nama}") // Logging
-                            } else {
-                                println("Kegiatan ID $id tidak ditemukan di kegiatan_umum")
+                                // Ambil status absen dari absensi/{id}/{uid}/status
+                                absensiRef.child(id).child(uid).child("status")
+                                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                                        override fun onDataChange(statusSnapshot: DataSnapshot) {
+                                            val status = statusSnapshot.getValue(String::class.java) ?: "Belum Absen"
+                                            kegiatan.status = status // Pastikan field ini ada di model
+                                            kegiatanList.add(kegiatan)
+                                            kegiatanAdapter.notifyDataSetChanged()
+                                        }
+
+                                        override fun onCancelled(error: DatabaseError) {
+                                            kegiatan.status = "Belum Absen"
+                                            kegiatanList.add(kegiatan)
+                                            kegiatanAdapter.notifyDataSetChanged()
+                                        }
+                                    })
                             }
                         }
-
-                        println("Total kegiatan yang dimuat: ${kegiatanList.size}")
-                        kegiatanAdapter.notifyDataSetChanged()
                     }
 
                     override fun onCancelled(error: DatabaseError) {
@@ -122,6 +133,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+
+
 
 
     override fun onResume() {

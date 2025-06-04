@@ -1,7 +1,7 @@
 package com.example.eventra1.view.history
 
-import ModelAbsensi
+import Absensi
 
 interface HistoryAdapterCallback {
-    fun onDelete(model: ModelAbsensi?)
+    fun onDelete(model: Absensi?)
 }

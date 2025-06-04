@@ -40,4 +40,14 @@
         android:textStyle="bold"
         android:textColor="#FF8800" /> <!-- Warna default status BELUM ABSEN -->
 
+    <Button
+        android:id="@+id/btnDeleteKegiatan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hapus"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#D32F2F"
+        android:layout_marginTop="8dp" />
+
+
 </LinearLayout>
