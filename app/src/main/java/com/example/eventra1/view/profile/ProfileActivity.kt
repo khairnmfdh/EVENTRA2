@@ -35,6 +35,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var etFakultas: EditText
     private lateinit var etUniversitas: EditText
     private lateinit var imgProfile: ImageView
+    private lateinit var imgUpload: ImageView
     private lateinit var btnSave: Button
     private lateinit var btnLogout: Button
     private var imageUri: Uri? = null
@@ -89,18 +90,22 @@ class ProfileActivity : AppCompatActivity() {
         session = SessionLogin(this) // 'this' = activity context
         session = SessionLogin(applicationContext)
 
-
         etNama = findViewById(R.id.etNama)
         textViewNamaDisplay = findViewById(R.id.textViewNamaDisplay)
         etProgramStudi = findViewById(R.id.etProgramStudi)
         etFakultas = findViewById(R.id.etFakultas)
         etUniversitas = findViewById(R.id.etUniversitas)
         imgProfile = findViewById(R.id.imgProfile)
+        imgUpload = findViewById(R.id.imgUpload)
         btnSave = findViewById(R.id.btnSave)
         btnLogout = findViewById(R.id.btnLogout)
 
 
-
+        imgUpload.setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "image/*"
+            startActivityForResult(intent, 101)
+        }
 
         imgProfile.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -145,9 +150,11 @@ class ProfileActivity : AppCompatActivity() {
                             Toast.makeText(this, "Profil berhasil disimpan", Toast.LENGTH_SHORT)
                                 .show()
                             loadUserData()
+                            clearFormInputs()
                         }
                         .addOnFailureListener {
                             Toast.makeText(this, "Gagal simpan profil", Toast.LENGTH_SHORT).show()
+                            clearFormInputs()
                         }
                 }
             } else {
@@ -155,9 +162,11 @@ class ProfileActivity : AppCompatActivity() {
                     .addOnSuccessListener {
                         Toast.makeText(this, "Profil berhasil disimpan", Toast.LENGTH_SHORT).show()
                         loadUserData()
+                        clearFormInputs()
                     }
                     .addOnFailureListener {
                         Toast.makeText(this, "Gagal simpan profil", Toast.LENGTH_SHORT).show()
+                        clearFormInputs()
                     }
             }
 
@@ -175,14 +184,17 @@ class ProfileActivity : AppCompatActivity() {
 
                             // ✅ Update tampilan nama
                             textViewNamaDisplay.text = nama
+                            clearFormInputs()
                         }
                         .addOnFailureListener {
                             Toast.makeText(this, "Gagal simpan ke Realtime DB", Toast.LENGTH_SHORT)
                                 .show()
+                            clearFormInputs()
                         }
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Gagal menyimpan ke Firestore", Toast.LENGTH_SHORT).show()
+                    clearFormInputs()
                 }
         }
     }
@@ -223,68 +235,16 @@ class ProfileActivity : AppCompatActivity() {
             }
         })
 
-
         val btnLogout = findViewById<Button>(R.id.btnLogout)
         btnLogout.setOnClickListener {
             session.logoutUser()
         }
-
-
-        /*btnSave.setOnClickListener {
-            saveUserData()
-        }*/
     }
-
-    private fun saveProfileToFirestrore() {
-        val profileData = mapOf<String, Any>(
-            "nama" to etNama.text.toString(),
-            "prodi" to etProgramStudi.text.toString(),
-            "fakultas" to etFakultas.text.toString(),
-            "universitas" to etUniversitas.text.toString(),
-            // Tambahkan image URL jika sudah ada
-        )
-
-        firestore.collection("profile")
-            .add(profileData)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Profil berhasil disimpan!", Toast.LENGTH_SHORT).show()
-
-                // Simpan juga ke Realtime Database
-                saveAbsenToRealtimeDatabase(profileData)
-
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Gagal menyimpan data", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-
-    private fun saveAbsenToRealtimeDatabase(profileData: Map<String, Any>) {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
-        if (uid == null) {
-            Toast.makeText(this, "UID tidak ditemukan", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val databaseRef = FirebaseDatabase.getInstance().getReference("profile").child(uid)
-        databaseRef.setValue(profileData)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Data disimpan ke Realtime Database!", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Gagal simpan ke Realtime DB", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-
-    private fun logoutUser() {
-        FirebaseAuth.getInstance().signOut()
-        val intent = Intent(this, LoginActivity::class.java) // Ganti LoginActivity dengan activity login kamu
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
+    private fun clearFormInputs() {
+        etNama.setText("")
+        etProgramStudi.setText("")
+        etFakultas.setText("")
+        etUniversitas.setText("")
     }
 
 

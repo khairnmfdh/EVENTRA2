@@ -54,15 +54,15 @@
             android:layout_marginTop="-80dp"
             android:paddingBottom="20dp">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgProfile"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:background="@drawable/circle_background"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/default_profile"
-                android:clickable="true"
-                android:focusable="true" />
+                app:shapeAppearanceOverlay="@style/CircleImageView"
+                android:layout_gravity="center" />
+
 
             <TextView
                 android:id="@+id/textViewNamaDisplay"
@@ -169,10 +169,15 @@
                     android:textSize="12sp"
                     android:layout_marginBottom="16dp" />
 
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_upload" />
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgUpload"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_upload"
+                    app:shapeAppearanceOverlay="@style/CircleImageView"
+                    android:layout_gravity="center" />
+
 
             </LinearLayout>
 

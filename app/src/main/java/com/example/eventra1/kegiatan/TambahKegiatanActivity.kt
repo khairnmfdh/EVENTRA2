@@ -28,7 +28,7 @@ class TambahKegiatanActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tambah_kegiatan)
 
-/*        val ref = FirebaseDatabase.getInstance().getReference("kegiatan_umum")
+/*       val ref = FirebaseDatabase.getInstance().getReference("kegiatan_umum")
         val batchUpdate = mutableMapOf<String, Any>()
 
         val daftarKegiatanBaru = listOf(

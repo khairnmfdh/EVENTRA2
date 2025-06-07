@@ -14,6 +14,8 @@ import com.example.eventra1.view.absen.AbsenActivity
 import com.example.eventra1.view.login.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.bumptech.glide.Glide
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,7 +39,6 @@ class MainActivity : AppCompatActivity() {
         binding.btnTambahKegiatan.setOnClickListener {
             val intent = Intent(this, TambahKegiatanActivity::class.java)
             startActivity(intent)
-            finish()
         }
 
         /*binding.btnTambahKegiatan.setOnClickListener {
@@ -54,12 +55,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun tampilkanNamaUser() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val databaseRef = FirebaseDatabase.getInstance().getReference("profile").child(uid)
+        val databaseRef = FirebaseDatabase.getInstance().getReference("users").child(uid)
+
         databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val nama = snapshot.child("nama").getValue(String::class.java)
+                val profileUrl = snapshot.child("profileUrl").getValue(String::class.java)
+
                 if (nama != null) {
                     binding.textViewNamaDisplay.text = "Hello, $nama!"
+                }
+
+                if (!profileUrl.isNullOrEmpty()) {
+                    Glide.with(this@MainActivity)
+                        .load(profileUrl)
+                        .into(binding.imageProfile)
                 }
             }
 
@@ -69,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+
     private fun setupRecyclerView() {
         kegiatanAdapter = KegiatanAdapter(kegiatanList) { kegiatan ->
             kegiatan.id?.let { bukaActivityAbsen(it) }  // Kirim ID, bukan nama
@@ -76,8 +87,6 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerViewKegiatan.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewKegiatan.adapter = kegiatanAdapter
     }
-
-
 
     private fun loadKegiatanUser() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -91,33 +100,51 @@ class MainActivity : AppCompatActivity() {
 
                 if (kegiatanIdList.isEmpty()) {
                     Toast.makeText(this@MainActivity, "Tidak ada ID kegiatan ditemukan", Toast.LENGTH_SHORT).show()
+                    kegiatanList.clear()
+                    kegiatanAdapter.notifyDataSetChanged()
+                    return
                 }
 
                 umumRef.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(allSnapshot: DataSnapshot) {
-                        kegiatanList.clear()
+                        val tempList = mutableListOf<Kegiatan>()
+                        var counter = 0
+                        val total = kegiatanIdList.size
+
                         for (id in kegiatanIdList) {
                             val kegiatanSnapshot = allSnapshot.child(id)
                             val kegiatan = kegiatanSnapshot.getValue(Kegiatan::class.java)
                             kegiatan?.id = id
 
                             if (kegiatan != null) {
-                                // Ambil status absen dari absensi/{id}/{uid}/status
                                 absensiRef.child(id).child(uid).child("status")
                                     .addListenerForSingleValueEvent(object : ValueEventListener {
                                         override fun onDataChange(statusSnapshot: DataSnapshot) {
                                             val status = statusSnapshot.getValue(String::class.java) ?: "Belum Absen"
-                                            kegiatan.status = status // Pastikan field ini ada di model
-                                            kegiatanList.add(kegiatan)
-                                            kegiatanAdapter.notifyDataSetChanged()
+                                            kegiatan.status = status
+                                            tempList.add(kegiatan)
+
+                                            counter++
+                                            if (counter == total) {
+                                                updateKegiatanList(tempList)
+                                            }
                                         }
 
                                         override fun onCancelled(error: DatabaseError) {
                                             kegiatan.status = "Belum Absen"
-                                            kegiatanList.add(kegiatan)
-                                            kegiatanAdapter.notifyDataSetChanged()
+                                            tempList.add(kegiatan)
+
+                                            counter++
+                                            if (counter == total) {
+                                                updateKegiatanList(tempList)
+                                            }
                                         }
                                     })
+                            } else {
+                                counter++
+                                if (counter == total) {
+                                    updateKegiatanList(tempList)
+                                }
                             }
                         }
                     }
@@ -134,26 +161,22 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-
-
+    private fun updateKegiatanList(newList: List<Kegiatan>) {
+        kegiatanList.clear()
+        kegiatanList.addAll(newList.distinctBy { it.id }) // pastikan tidak duplikat berdasarkan ID
+        kegiatanAdapter.notifyDataSetChanged()
+    }
 
     override fun onResume() {
         super.onResume()
         loadKegiatanUser()
     }
 
-
-
-
-
     private fun bukaActivityAbsen(kegiatanId: String) {
         val intent = Intent(this, AbsenActivity::class.java)
         intent.putExtra("id_kegiatan", kegiatanId)
         startActivity(intent)
     }
-
-
-
 
     private fun logoutUser() {
         FirebaseAuth.getInstance().signOut()
@@ -162,4 +185,5 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
 }

@@ -61,6 +61,9 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.4.1")
     implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")
 
+    // build.gradle (Module)
+    implementation ("com.google.android.material:material:1.11.0")
+
     // Room Database
 
     implementation ("com.squareup.okhttp3:okhttp:4.12.0")
