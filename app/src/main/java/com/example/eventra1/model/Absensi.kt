@@ -3,7 +3,8 @@ data class Absensi(
     val lokasi: String = "",
     val imageUrl: String = "",
     val timestamp: String = "",
-    val uid: String = ""
+    val uid: String = "",
+    val id: String = ""
 ) {
     companion object {
         fun toMap(modelAbsensi: Absensi): Map<String, Any> {

@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.bumptech.glide.Glide
 import com.example.eventra1.view.profile.ProfileActivity
 import com.example.eventra1.R
 import com.example.eventra1.view.main.MainActivity
@@ -48,21 +49,30 @@ class AbsenActivity : AppCompatActivity() {
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
         val kegiatanId = intent.getStringExtra("id_kegiatan")
 
-        if (kegiatanId != null) {
+        Log.d("AbsenActivity", "kegiatanId dari Intent: $kegiatanId")
+        tvTitle.text = kegiatanId
+
+/*        if (kegiatanId != null) {
             val ref = FirebaseDatabase.getInstance().getReference("kegiatan_umum").child(kegiatanId)
             ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val namaKegiatan = snapshot.child("nama").getValue(String::class.java)
+
+                    Log.d("AbsenActivity", "namaKegiatan dari Firebase: $namaKegiatan")
+
                     if (namaKegiatan != null) {
                         tvTitle.text = namaKegiatan
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
+                    Log.e("AbsenActivity", "Database error: ${error.message}")
                     Toast.makeText(this@AbsenActivity, "Gagal ambil nama kegiatan", Toast.LENGTH_SHORT).show()
                 }
             })
-        }
+        }*/
+
+
 
 
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
@@ -77,20 +87,28 @@ class AbsenActivity : AppCompatActivity() {
         val tvProdi = findViewById<TextView>(R.id.tvProdi)
         val tvFakultas = findViewById<TextView>(R.id.tvFakultas)
         val tvUniversitas = findViewById<TextView>(R.id.tvUniversitas)
-
-
+        val absenProfile = findViewById<ImageView>(R.id.absenProfile)
 
 
 
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         if (uid != null) {
-            val profileRef = FirebaseDatabase.getInstance().getReference("profile").child(uid)
+            val profileRef = FirebaseDatabase.getInstance().getReference("users").child(uid)
             profileRef.addListenerForSingleValueEvent(object : com.google.firebase.database.ValueEventListener {
                 override fun onDataChange(snapshot: com.google.firebase.database.DataSnapshot) {
                     val nama = snapshot.child("nama").getValue(String::class.java)
-                    val prodi = snapshot.child("prodi").getValue(String::class.java)
+                    val prodi = snapshot.child("programStudi").getValue(String::class.java)
                     val fakultas = snapshot.child("fakultas").getValue(String::class.java)
                     val universitas = snapshot.child("universitas").getValue(String::class.java)
+                    val profileUrl = snapshot.child("profileUrl").getValue(String::class.java)
+                    if (profileUrl != null) {
+                        Glide.with(this@AbsenActivity)
+                            .load(profileUrl)
+                            .placeholder(R.drawable.ic_user_avatar) // optional, gambar saat loading
+                            .error(R.drawable.ic_user_avatar)             // optional, gambar jika gagal load
+                            .circleCrop()
+                            .into(absenProfile)                      // ini adalah ImageView
+                    }
 
                     if (nama != null) tvNama.text = nama
                     if (prodi != null) tvProdi.text = prodi
@@ -102,14 +120,6 @@ class AbsenActivity : AppCompatActivity() {
                     Toast.makeText(this@AbsenActivity, "Gagal mengambil data profil", Toast.LENGTH_SHORT).show()
                 }
             })
-        }
-
-
-        val imageProfile = findViewById<ImageView>(R.id.imageProfile)
-
-        imageProfile.setOnClickListener {
-            val intent = Intent(this@AbsenActivity, ProfileActivity::class.java)
-            startActivity(intent)
         }
 
         // Init

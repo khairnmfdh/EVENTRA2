@@ -3,6 +3,7 @@ package com.example.eventra1.view.main
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventra1.view.profile.ProfileActivity
@@ -81,12 +82,44 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setupRecyclerView() {
-        kegiatanAdapter = KegiatanAdapter(kegiatanList) { kegiatan ->
-            kegiatan.id?.let { bukaActivityAbsen(it) }  // Kirim ID, bukan nama
-        }
+        kegiatanAdapter = KegiatanAdapter(kegiatanList,
+            onItemClick = {kegiatan -> kegiatan.nama?.let{
+                bukaActivityAbsen(it)
+            }},
+            onDeleteClick = {kegiatan -> deleteKegiatan(kegiatan)})
+
         binding.recyclerViewKegiatan.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewKegiatan.adapter = kegiatanAdapter
     }
+
+    private fun deleteKegiatan(kegiatan: Kegiatan) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val kegiatanId = kegiatan.id ?: return
+
+
+        AlertDialog.Builder(this)
+            .setTitle("Konfirmasi Hapus")
+            .setMessage("Apakah kamu yakin ingin menghapus kegiatan \"${kegiatan.nama}\"?")
+            .setPositiveButton("Hapus") { _, _ ->
+                val userRef = FirebaseDatabase.getInstance()
+                    .getReference("kegiatan_user")
+                    .child(uid)
+                    .child(kegiatanId)
+
+
+                userRef.removeValue()
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Kegiatan berhasil dihapus", Toast.LENGTH_SHORT).show()
+                        loadKegiatanUser() // Refresh tampilan
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Gagal menghapus kegiatan", Toast.LENGTH_SHORT).show()
+                    }
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+
 
     private fun loadKegiatanUser() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -117,29 +150,37 @@ class MainActivity : AppCompatActivity() {
                             kegiatan?.id = id
 
                             if (kegiatan != null) {
-                                absensiRef.child(id).child(uid).child("status")
-                                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                                        override fun onDataChange(statusSnapshot: DataSnapshot) {
-                                            val status = statusSnapshot.getValue(String::class.java) ?: "Belum Absen"
-                                            kegiatan.status = status
-                                            tempList.add(kegiatan)
+                                val namaKegiatan = kegiatan.nama
+                                if (namaKegiatan != null) {
+                                    absensiRef.child(namaKegiatan).child(uid).child("status")
+                                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                                            override fun onDataChange(statusSnapshot: DataSnapshot) {
+                                                val status = statusSnapshot.getValue(String::class.java) ?: "Belum Absen"
+                                                kegiatan.status = status
+                                                tempList.add(kegiatan)
 
-                                            counter++
-                                            if (counter == total) {
-                                                updateKegiatanList(tempList)
+                                                counter++
+                                                if (counter == total) {
+                                                    updateKegiatanList(tempList)
+                                                }
                                             }
-                                        }
 
-                                        override fun onCancelled(error: DatabaseError) {
-                                            kegiatan.status = "Belum Absen"
-                                            tempList.add(kegiatan)
+                                            override fun onCancelled(error: DatabaseError) {
+                                                kegiatan.status = "Belum Absen"
+                                                tempList.add(kegiatan)
 
-                                            counter++
-                                            if (counter == total) {
-                                                updateKegiatanList(tempList)
+                                                counter++
+                                                if (counter == total) {
+                                                    updateKegiatanList(tempList)
+                                                }
                                             }
-                                        }
-                                    })
+                                        })
+                                } else {
+                                    counter++
+                                    if (counter == total) {
+                                        updateKegiatanList(tempList)
+                                    }
+                                }
                             } else {
                                 counter++
                                 if (counter == total) {
@@ -150,16 +191,17 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        Toast.makeText(this@MainActivity, "Gagal ambil kegiatan_umum", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, "Gagal mengambil data kegiatan", Toast.LENGTH_SHORT).show()
                     }
                 })
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@MainActivity, "Gagal ambil kegiatan_user", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Gagal mengambil ID kegiatan", Toast.LENGTH_SHORT).show()
             }
         })
     }
+
 
     private fun updateKegiatanList(newList: List<Kegiatan>) {
         kegiatanList.clear()

@@ -25,14 +25,6 @@
             android:src="@drawable/ic_back"
             android:contentDescription="Back" />
 
-        <ImageView
-            android:id="@+id/imageProfile"
-            android:layout_width="69dp"
-            android:layout_height="76dp"
-            android:layout_marginLeft="150dp"
-            android:layout_marginTop="0dp"
-            android:contentDescription="Profil"
-            android:src="@drawable/default_profile" />
 
 
 
@@ -74,11 +66,13 @@
 
                 <!-- Avatar -->
                 <ImageView
+                    android:id="@+id/absenProfile"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:src="@drawable/ic_user_avatar"
                     android:layout_marginEnd="12dp"
                     android:contentDescription="User Avatar" />
+
 
                 <!-- Kolom teks: Nama & Deskripsi -->
                 <LinearLayout
